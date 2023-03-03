@@ -3,20 +3,20 @@
 LiquidCrystal_I2C lcd(0x27, 16, 2); // I2C address 0x27, 16 column and 2 rows
 
 static unsigned long startTime = 0;
-static unsigned long stopTime = 0;;
+static unsigned long stopTime = 0;
+static double elapsedTimeInMinutes = 0;
 
 
-void displayTime(String time) {
-    lcd.clear();                 // clear display
-    lcd.setCursor(0, 0);         // move cursor to   (0, 0)
-    lcd.print(time);        // print message at (0, 0)
-    lcd.print(" min");
+void displayTime(String time) {            // clear display
+  lcd.setCursor(0, 0);         // move cursor to   (0, 0)
+  lcd.print(time);        // print message at (0, 0)
+  lcd.print(" min");
 }
 
 void displayLight(String lightLevel) {
-    lcd.setCursor(0, 1);         // move cursor to   (0, 1)
-    lcd.print(lightLevel);        // print message at (0, 1)
-    lcd.print(" light");
+  lcd.setCursor(0, 1);         // move cursor to   (0, 1)
+  lcd.print(lightLevel);        // print message at (0, 1)
+  lcd.print(" light");
 }
 
 void setup() {
@@ -27,32 +27,26 @@ void setup() {
 }
 
 void loop() {
+  lcd.clear();     
   // reads the input on analog pin A0 (value between 0 and 1023)
   int analogValue = analogRead(A0);
 
   Serial.print("Analog reading: ");
-  Serial.print(analogValue);   // the raw analog reading
+  Serial.println(analogValue);   // the raw analog reading
+  displayLight(String(analogValue));
 
   // We'll have a few threshholds, qualitatively determined
-  if (analogValue < 10) {
-    Serial.println(" - Dark");
-  } else if (analogValue < 200) {
-    Serial.println(" - Dim");
-  } else if (analogValue < 500) {
-    Serial.println(" - Light");
-  } else if (analogValue < 800) {
-    Serial.println(" - Bright");
+  if (analogValue == 0) {
+    startTime = millis();
   } else {
-    Serial.println(" - Very bright");
+    stopTime = millis();  
+    unsigned long elapsedTime = stopTime - startTime;
+    elapsedTimeInMinutes += (double)elapsedTime/60000;
   }
-  stopTime = millis();  
-  unsigned long elapsedTime = stopTime - startTime;
 
-  double elapsedTimeInMinutes = (double)elapsedTime/60000;
-
+  Serial.print("Time in min: ");
   Serial.println(elapsedTimeInMinutes, 4);
-  displayTime(String(elapsedTimeInMinutes, 4));
-  displayLight(String(analogValue));
+  displayTime(String(elapsedTimeInMinutes, 2));  
 
   delay(2000);
 }
