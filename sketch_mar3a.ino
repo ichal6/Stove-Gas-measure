@@ -21,7 +21,7 @@ void displayLight(String lightLevel) {
 
 void setup() {
   startTime = millis();
-  Serial.begin(9600); // initialize serial communication at 9600 bits per second:
+  // Serial.begin(9600); // initialize serial communication at 9600 bits per second:
   lcd.init(); //initialize the lcd
   lcd.backlight(); //open the backlight 
 }
@@ -31,8 +31,8 @@ void loop() {
   // reads the input on analog pin A0 (value between 0 and 1023)
   int analogValue = analogRead(A0);
 
-  Serial.print("Analog reading: ");
-  Serial.println(analogValue);   // the raw analog reading
+  // Serial.print("Analog reading: ");
+  // Serial.println(analogValue);   // the raw analog reading
   displayLight(String(analogValue));
 
   // We'll have a few threshholds, qualitatively determined
@@ -44,9 +44,9 @@ void loop() {
     elapsedTimeInMinutes += (double)elapsedTime/60000;
   }
 
-  Serial.print("Time in min: ");
-  Serial.println(elapsedTimeInMinutes, 4);
+  // Serial.print("Time in min: ");
+  // Serial.println(elapsedTimeInMinutes, 4);
   displayTime(String(elapsedTimeInMinutes, 2));  
 
-  delay(2000);
+  delay(2000); // refresh in two seconds
 }
