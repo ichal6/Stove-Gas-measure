@@ -5,6 +5,8 @@ LiquidCrystal_I2C lcd(0x27, 16, 2); // I2C address 0x27, 16 column and 2 rows
 static unsigned long startTime = 0;
 static unsigned long stopTime = 0;
 static double elapsedTimeInMinutes = 0;
+static double totalTimeInMinutes = 0;
+static bool isSaved = false;
 
 
 void displayTime(String time) {            // clear display
@@ -35,18 +37,23 @@ void loop() {
   // Serial.println(analogValue);   // the raw analog reading
   displayLight(String(analogValue));
 
-  // We'll have a few threshholds, qualitatively determined
   if (analogValue == 0) {
+    if (isSaved == false) {
+      isSaved = true;
+      totalTimeInMinutes += elapsedTimeInMinutes;
+      elapsedTimeInMinutes = 0;
+    }
     startTime = millis();
   } else {
+    isSaved = false;
     stopTime = millis();  
     unsigned long elapsedTime = stopTime - startTime;
-    elapsedTimeInMinutes += (double)elapsedTime/60000;
+    elapsedTimeInMinutes = (double)elapsedTime/60000;
   }
 
   // Serial.print("Time in min: ");
   // Serial.println(elapsedTimeInMinutes, 4);
-  displayTime(String(elapsedTimeInMinutes, 2));  
+  displayTime(String(elapsedTimeInMinutes + totalTimeInMinutes, 2));  
 
   delay(2000); // refresh in two seconds
 }
