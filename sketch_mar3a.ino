@@ -2,24 +2,25 @@
 
 LiquidCrystal_I2C lcd(0x27, 16, 2); // I2C address 0x27, 16 column and 2 rows
 
-void display() {
-    Serial.print("Start: ");
+static unsigned long startTime = 0;
+static unsigned long stopTime = 0;;
+
+
+void displayTime(String time) {
     lcd.clear();                 // clear display
     lcd.setCursor(0, 0);         // move cursor to   (0, 0)
-    lcd.print("Arduino");        // print message at (0, 0)
-    lcd.setCursor(2, 1);         // move cursor to   (2, 1)
-    lcd.print("GetStarted.com"); // print message at (2, 1)
-    delay(2000);                 // display the above for two seconds
+    lcd.print(time);        // print message at (0, 0)
+    lcd.print(" min");
+}
 
-    lcd.clear();                  // clear display
-    lcd.setCursor(3, 0);          // move cursor to   (3, 0)
-    lcd.print("DIYables");        // print message at (3, 0)
-    lcd.setCursor(0, 1);          // move cursor to   (0, 1)
-    lcd.print("www.diyables.io"); // print message at (0, 1)
-    delay(2000);                  // display the above for two seconds
+void displayLight(String lightLevel) {
+    lcd.setCursor(0, 1);         // move cursor to   (0, 1)
+    lcd.print(lightLevel);        // print message at (0, 1)
+    lcd.print(" light");
 }
 
 void setup() {
+  startTime = millis();
   Serial.begin(9600); // initialize serial communication at 9600 bits per second:
   lcd.init(); //initialize the lcd
   lcd.backlight(); //open the backlight 
@@ -44,7 +45,14 @@ void loop() {
   } else {
     Serial.println(" - Very bright");
   }
+  stopTime = millis();  
+  unsigned long elapsedTime = stopTime - startTime;
 
-  delay(500);
-  display();
+  double elapsedTimeInMinutes = (double)elapsedTime/60000;
+
+  Serial.println(elapsedTimeInMinutes, 4);
+  displayTime(String(elapsedTimeInMinutes, 4));
+  displayLight(String(analogValue));
+
+  delay(2000);
 }
