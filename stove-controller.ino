@@ -8,6 +8,8 @@ static double elapsedTimeInMinutes = 0;
 static double totalTimeInMinutes = 0;
 static bool isSaved = false;
 
+const int BUTTON_PIN = 2;  // the number of the pushbutton pin
+
 
 void displayTime(String time) {            // clear display
   lcd.setCursor(0, 0);         // move cursor to   (0, 0)
@@ -25,11 +27,17 @@ void setup() {
   startTime = millis();
   // Serial.begin(9600); // initialize serial communication at 9600 bits per second:
   lcd.init(); //initialize the lcd
-  lcd.backlight(); //open the backlight 
+  pinMode(BUTTON_PIN, INPUT); // initialize the pushbutton pin as an input
 }
 
 void loop() {
-  lcd.clear();     
+  lcd.clear();
+  int buttonState = digitalRead(BUTTON_PIN); // read the state of the pushbutton value
+  if (buttonState == HIGH) { // check if the pushbutton is pressed. If it is, the buttonState is HIGH:
+    lcd.backlight();
+  } else {
+    lcd.noBacklight();
+  }
   // reads the input on analog pin A0 (value between 0 and 1023)
   int analogValue = analogRead(A0);
 
