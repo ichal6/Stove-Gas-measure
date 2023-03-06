@@ -37,7 +37,7 @@ void loop() {
   // Serial.println(analogValue);   // the raw analog reading
   displayLight(String(analogValue));
 
-  if (analogValue == 0) {
+  if (analogValue <= 2) {
     if (isSaved == false) {
       isSaved = true;
       totalTimeInMinutes += elapsedTimeInMinutes;
