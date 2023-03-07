@@ -8,7 +8,8 @@ static double elapsedTimeInMinutes = 0;
 static double totalTimeInMinutes = 0;
 static bool isSaved = false;
 static unsigned long totalLight = 0;
-static bool displayTotalLight = false;
+static int maxLight = 0;
+static byte displayTotalLight = 0;
 
 const int BUTTON_PIN = 2;  // the number of the pushbutton pin
 
@@ -21,15 +22,19 @@ void displayTime(String time) {            // clear display
 
 void displayLight(String lightLevel) {
   lcd.setCursor(0, 1); // move cursor to first char in second line
-  if (displayTotalLight) {
+  if (displayTotalLight == 0) {
     lcd.print("Total: ");
     lcd.print(totalLight);
-    displayTotalLight = false;
-  } else {
+    displayTotalLight = 1;
+  } else if (displayTotalLight == 1){
     lcd.print("Act. light: ");
     lcd.print(lightLevel);
-    displayTotalLight = true;  
-  } 
+    displayTotalLight = 2;  
+  } else if (displayTotalLight == 2) {
+    lcd.print("Max light: ");
+    lcd.print(maxLight);
+    displayTotalLight = 0;  
+  }
 }
 
 void setup() {
@@ -62,7 +67,8 @@ void loop() {
     }
     startTime = millis();
   } else {
-    totalLight += analogValue;    
+    totalLight += analogValue;   
+    setMaxValue(analogValue);
     isSaved = false;
     stopTime = millis();  
     unsigned long elapsedTime = stopTime - startTime;
@@ -74,4 +80,10 @@ void loop() {
   displayTime(String(elapsedTimeInMinutes + totalTimeInMinutes, 2));  
 
   delay(2000); // refresh in two seconds
+}
+
+void setMaxValue(int value) {
+  if(maxLight < value) {
+    maxLight = value;
+  }
 }
