@@ -4,5 +4,9 @@
 
 2. The second step you should install library LiquidCrystal_I2C
 
+## Online simulator
+Online simuator of project available on: [wokwi](https://wokwi.com/projects/358545250337505281)
+Because simulator system doesn't have simple photoresitor is replace by potentiometer.
+
 
 
