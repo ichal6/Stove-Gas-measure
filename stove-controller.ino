@@ -4,6 +4,7 @@ LiquidCrystal_I2C lcd(0x27, 16, 2); // I2C address 0x27, 16 column and 2 rows
 
 static unsigned long startTime = 0;
 static unsigned long stopTime = 0;
+static unsigned long backlightStart = 0;
 static double elapsedTimeInMinutes = 0;
 static double totalTimeInMinutes = 0;
 static bool isSaved = false;
@@ -84,10 +85,14 @@ void setMaxValue(int value) {
 }
 
 void switchBackLight() {
-  int buttonState = digitalRead(BUTTON_PIN); // read the state of the pushbutton value
+  int buttonState = digitalRead(BUTTON_PIN); // read the state of the pushbutton value 
   if (buttonState == HIGH) { // check if the pushbutton is pressed. If it is, the buttonState is HIGH:
+    backlightStart = millis();
     lcd.backlight();
   } else {
-    lcd.noBacklight();
+    unsigned long elapsedBacklightTime = millis() - backlightStart;
+    if (elapsedBacklightTime > 10000) {
+          lcd.noBacklight();
+    }
   }
 }
