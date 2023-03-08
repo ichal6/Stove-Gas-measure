@@ -46,12 +46,7 @@ void setup() {
 
 void loop() {
   lcd.clear();
-  int buttonState = digitalRead(BUTTON_PIN); // read the state of the pushbutton value
-  if (buttonState == HIGH) { // check if the pushbutton is pressed. If it is, the buttonState is HIGH:
-    lcd.backlight();
-  } else {
-    lcd.noBacklight();
-  }
+  switchBackLight();
   // reads the input on analog pin A0 (value between 0 and 1023)
   int analogValue = analogRead(A0);
 
@@ -85,5 +80,14 @@ void loop() {
 void setMaxValue(int value) {
   if(maxLight < value) {
     maxLight = value;
+  }
+}
+
+void switchBackLight() {
+  int buttonState = digitalRead(BUTTON_PIN); // read the state of the pushbutton value
+  if (buttonState == HIGH) { // check if the pushbutton is pressed. If it is, the buttonState is HIGH:
+    lcd.backlight();
+  } else {
+    lcd.noBacklight();
   }
 }
