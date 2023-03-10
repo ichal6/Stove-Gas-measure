@@ -13,6 +13,7 @@ static int maxLight = 0;
 static byte displayTotalLight = 0;
 
 const int BUTTON_PIN = 2;  // the number of the pushbutton pin
+const int STOVE_PIN = 3;
 const int DRIVER_1_PIN = 13;
 const int PILOT_DRIVER_1_PIN = 12;
 
@@ -47,8 +48,8 @@ void setup() {
   pinMode(BUTTON_PIN, INPUT); // initialize the pushbutton pin as an input
   pinMode(DRIVER_1_PIN, INPUT);
   pinMode(PILOT_DRIVER_1_PIN, OUTPUT);
-  pinMode(3, OUTPUT);
-  digitalWrite(3, HIGH);
+  pinMode(STOVE_PIN, OUTPUT);
+  digitalWrite(STOVE_PIN, LOW);
   digitalWrite(PILOT_DRIVER_1_PIN, LOW);
 }
 
@@ -100,16 +101,19 @@ void switchBackLight() {
   } else {
     unsigned long elapsedBacklightTime = millis() - backlightStart;
     if (elapsedBacklightTime > 10000) {
-          lcd.noBacklight();
+      lcd.noBacklight();
     }
   }
 }
 
 void readFromDriver(int driverNumberPin, int pilotNumberPin) {
   int isTurnOn = digitalRead(driverNumberPin);
+  // Serial.println(isTurnOn);
   if(isTurnOn == HIGH) {
     digitalWrite(pilotNumberPin, HIGH);
+    digitalWrite(STOVE_PIN, HIGH);
   } else {
     digitalWrite(pilotNumberPin, LOW);
+    digitalWrite(STOVE_PIN, LOW);
   }
 }
