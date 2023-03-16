@@ -13,6 +13,9 @@ static int maxLight = 0;
 static byte displayTotalLight = 0;
 
 const int BUTTON_PIN = 2;  // the number of the pushbutton pin
+const int STOVE_PIN = 3;
+const int DRIVER_1_PIN = 13;
+const int PILOT_DRIVER_1_PIN = 12;
 
 
 void displayTime(String time) {            // clear display
@@ -43,10 +46,16 @@ void setup() {
   // Serial.begin(9600); // initialize serial communication at 9600 bits per second:
   lcd.init(); //initialize the lcd
   pinMode(BUTTON_PIN, INPUT); // initialize the pushbutton pin as an input
+  pinMode(DRIVER_1_PIN, INPUT);
+  pinMode(PILOT_DRIVER_1_PIN, OUTPUT);
+  pinMode(STOVE_PIN, OUTPUT);
+  digitalWrite(STOVE_PIN, LOW);
+  digitalWrite(PILOT_DRIVER_1_PIN, LOW);
 }
 
 void loop() {
   lcd.clear();
+  readFromDriver(DRIVER_1_PIN, PILOT_DRIVER_1_PIN);
   switchBackLight();
   // reads the input on analog pin A0 (value between 0 and 1023)
   int analogValue = analogRead(A0);
@@ -92,7 +101,19 @@ void switchBackLight() {
   } else {
     unsigned long elapsedBacklightTime = millis() - backlightStart;
     if (elapsedBacklightTime > 10000) {
-          lcd.noBacklight();
+      lcd.noBacklight();
     }
+  }
+}
+
+void readFromDriver(int driverNumberPin, int pilotNumberPin) {
+  int isTurnOn = digitalRead(driverNumberPin);
+  // Serial.println(isTurnOn);
+  if(isTurnOn == HIGH) {
+    digitalWrite(pilotNumberPin, HIGH);
+    digitalWrite(STOVE_PIN, HIGH);
+  } else {
+    digitalWrite(pilotNumberPin, LOW);
+    digitalWrite(STOVE_PIN, LOW);
   }
 }
