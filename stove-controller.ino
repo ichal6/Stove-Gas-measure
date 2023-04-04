@@ -16,6 +16,8 @@ const int BUTTON_PIN = 2;  // the number of the pushbutton pin
 const int STOVE_PIN = 3;
 const int DRIVER_1_PIN = 13;
 const int PILOT_DRIVER_1_PIN = 12;
+const int DRIVER_2_PIN = 11;
+const int PILOT_DRIVER_2_PIN = 10;
 
 
 void displayTime(String time) {            // clear display
@@ -43,19 +45,26 @@ void displayLight(String lightLevel) {
 
 void setup() {
   startTime = millis();
-  // Serial.begin(9600); // initialize serial communication at 9600 bits per second:
+  Serial.begin(9600); // initialize serial communication at 9600 bits per second:
   lcd.init(); //initialize the lcd
   pinMode(BUTTON_PIN, INPUT); // initialize the pushbutton pin as an input
   pinMode(DRIVER_1_PIN, INPUT);
   pinMode(PILOT_DRIVER_1_PIN, OUTPUT);
   pinMode(STOVE_PIN, OUTPUT);
+  pinMode(DRIVER_2_PIN, INPUT);
+  pinMode(PILOT_DRIVER_2_PIN, OUTPUT);
   digitalWrite(STOVE_PIN, LOW);
   digitalWrite(PILOT_DRIVER_1_PIN, LOW);
+  digitalWrite(PILOT_DRIVER_2_PIN, LOW);
 }
 
 void loop() {
+  bool driver1Run, driver2Run;
+  driver1Run = readFromDriver(DRIVER_1_PIN, PILOT_DRIVER_1_PIN);
+  driver2Run = readFromDriver(DRIVER_2_PIN, PILOT_DRIVER_2_PIN);
+  runStove(driver1Run || driver2Run);
+
   lcd.clear();
-  readFromDriver(DRIVER_1_PIN, PILOT_DRIVER_1_PIN);
   switchBackLight();
   // reads the input on analog pin A0 (value between 0 and 1023)
   int analogValue = analogRead(A0);
@@ -106,14 +115,23 @@ void switchBackLight() {
   }
 }
 
-void readFromDriver(int driverNumberPin, int pilotNumberPin) {
+bool readFromDriver(int driverNumberPin, int pilotNumberPin) {
   int isTurnOn = digitalRead(driverNumberPin);
-  // Serial.println(isTurnOn);
+  Serial.print(driverNumberPin);
+  Serial.print(" = ");
+  Serial.println(isTurnOn);
   if(isTurnOn == HIGH) {
     digitalWrite(pilotNumberPin, HIGH);
-    digitalWrite(STOVE_PIN, HIGH);
+    return true;
   } else {
     digitalWrite(pilotNumberPin, LOW);
-    digitalWrite(STOVE_PIN, LOW);
+    return false;
   }
+}
+
+void runStove(bool ifRun) {
+  if(ifRun)
+    digitalWrite(STOVE_PIN, HIGH);
+  else
+    digitalWrite(STOVE_PIN, LOW);
 }
